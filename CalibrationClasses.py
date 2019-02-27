@@ -164,14 +164,14 @@ class CalibratedModel:
         # simulate all cohorts
         self.multiCohorts.simulate(time_steps)
 
-    def get_mean_survival_time_proj_interval(self, alpha, deci):
+    def get_mean_survival_time_proj_interval(self, alpha):
         """
         :param alpha: the significance level
         :param deci: decimal places
         :returns text in the form of 'mean (lower, upper)' of projection interval
         """
 
-        mean = self.multiCohorts.multiCohortOutcomes.overallMeanSurvivalTime
-        proj_interval = self.multiCohorts.multiCohortOutcomes.sumStat_meanSurvivalTime.get_PI(alpha)
+        mean = self.multiCohorts.multiCohortOutcomes.statMeanSurvivalTime.get_mean()
+        proj_interval = self.multiCohorts.multiCohortOutcomes.statMeanSurvivalTime.get_PI(alpha=alpha)
 
-        return FormatSupport.format_estimate_interval(mean, proj_interval, deci)
+        return mean, proj_interval
