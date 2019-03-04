@@ -6,7 +6,7 @@ import SimPy.FigureSupport as Fig
 calibration = Cls.Calibration()
 
 # sample the posterior of the mortality probability
-calibration.sample_posterior()
+calibration.sample_posterior(n_samples=CalibSets.POST_N)
 
 # create the histogram of the resampled mortality probabilities
 Fig.graph_histogram(

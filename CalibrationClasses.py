@@ -18,18 +18,21 @@ class Calibration:
     def __init__(self):
         """ initializes the calibration object"""
 
-        self.cohortIDs = range(CalibSets.POST_N)   # IDs of cohorts to simulate
+        self.cohortIDs = []             # IDs of cohorts to simulate
         self.mortalitySamples = []      # values of mortality probability at which the posterior should be sampled
         self.normalizedWeights = []     # normalized likelihood weights (sums to 1)
-        self.csvRows = \
-            [['Cohort ID', 'Likelihood Weights', 'Mortality Prob']]  # list containing the calibration results
         self.mortalityResamples = []  # resampled values for constructing posterior estimate and interval
 
-    def sample_posterior(self):
-        """ sample the posterior distribution of the mortality probability """
+    def sample_posterior(self, n_samples):
+        """ sample the posterior distribution of the mortality probability,
+         :param n_samples: number of samples from the posterior distribution
+         """
 
         # specifying the seed of the numpy random number generator
         np.random.seed(1)
+
+        # cohort ids
+        self.cohortIDs = range(n_samples)
 
         # find values of mortality probability at which the posterior should be evaluated
         self.mortalitySamples = np.random.uniform(
@@ -69,25 +72,28 @@ class Calibration:
         sum_weights = np.sum(weights)
         self.normalizedWeights = np.divide(weights, sum_weights)
 
-        # re-sample mortality probability (with replacement) according to likelihood weights
-        self.mortalityResamples = np.random.choice(
-            a=self.mortalitySamples,
-            size=CalibSets.NUM_SIM_COHORTS,
-            replace=True,
-            p=self.normalizedWeights)
-
         # produce the list to report the results
+        csv_rows = \
+            [['Cohort ID', 'Likelihood Weights', 'Mortality Prob']]  # list containing the calibration results
         for i in range(len(self.mortalitySamples)):
-            self.csvRows.append(
+            csv_rows.append(
                 [self.cohortIDs[i], self.normalizedWeights[i], self.mortalitySamples[i]])
 
         # write the calibration result into a csv file
         InOutSupport.write_csv(
             file_name='CalibrationResults.csv',
-            rows=self.csvRows)
+            rows=csv_rows)
+
+        # re-sample mortality probability (with replacement) according to likelihood weights
+        self.mortalityResamples = np.random.choice(
+            a=self.mortalitySamples,
+            size=n_samples,
+            replace=True,
+            p=self.normalizedWeights)
 
     def get_mortality_estimate_credible_interval(self, alpha):
         """
+        :param n_samples: number of resamples from parameter values
         :param alpha: the significance level
         :returns tuple (mean, [lower, upper]) of the posterior distribution"""
 
