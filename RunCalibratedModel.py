@@ -4,9 +4,11 @@ import SimPy.FigureSupport as Fig
 
 
 # initialize a calibrated model
-calibrated_model = Cls.CalibratedModel('CalibrationResults.csv')
+calibrated_model = Cls.CalibratedModel(csv_file_name='CalibrationResults.csv')
 # simulate the calibrated model
-calibrated_model.simulate(P.NUM_SIM_COHORTS, P.SIM_POP_SIZE, P.TIME_STEPS)
+calibrated_model.simulate(num_of_simulated_cohorts=P.NUM_SIM_COHORTS,
+                          cohort_size=P.SIM_POP_SIZE,
+                          time_steps=P.TIME_STEPS)
 
 # plot the histogram of mean survival time
 Fig.graph_histogram(
@@ -18,4 +20,4 @@ Fig.graph_histogram(
 
 # report mean and projection interval
 print('Mean survival time and {:.{prec}%} projection interval:'.format(1 - P.ALPHA, prec=0),
-      calibrated_model.get_mean_survival_time_proj_interval(P.ALPHA))
+      calibrated_model.get_mean_survival_time_proj_interval(alpha=P.ALPHA))

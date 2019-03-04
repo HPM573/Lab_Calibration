@@ -3,7 +3,6 @@ import scipy.stats as stat
 import numpy as np
 import SimPy.InOutFunctions as InOutSupport
 import SimPy.StatisticalClasses as StatSupport
-import SimPy.FormatFunctions as FormatSupport
 import MultiSurvivalModelClasses as SurvivalCls
 import CalibrationSettings as CalibSets
 
@@ -11,14 +10,14 @@ import CalibrationSettings as CalibSets
 class CalibrationColIndex(Enum):
     """ indices of columns in the calibration results cvs file  """
     ID = 0          # cohort ID
-    W = 1  # likelihood weight
+    W = 1           # likelihood weight
     MORT_PROB = 2   # mortality probability
 
 
 class Calibration:
     def __init__(self):
         """ initializes the calibration object"""
-        np.random.seed(1)   # specifying the seed of the numpy random number generator
+
         self.cohortIDs = range(CalibSets.POST_N)   # IDs of cohorts to simulate
         self.mortalitySamples = []      # values of mortality probability at which the posterior should be sampled
         self.mortalityResamples = []    # resampled values for constructing posterior estimate and interval
@@ -29,6 +28,9 @@ class Calibration:
 
     def sample_posterior(self):
         """ sample the posterior distribution of the mortality probability """
+
+        # specifying the seed of the numpy random number generator
+        np.random.seed(1)
 
         # find values of mortality probability at which the posterior should be evaluated
         self.mortalitySamples = np.random.uniform(
@@ -44,7 +46,7 @@ class Calibration:
         )
 
         # simulate the multi cohort
-        multi_cohort.simulate(CalibSets.TIME_STEPS)
+        multi_cohort.simulate(n_time_steps=CalibSets.TIME_STEPS)
 
         # calculate the likelihood of each simulated cohort
         for cohort_id in self.cohortIDs:
@@ -52,7 +54,7 @@ class Calibration:
             # get the average survival time for this cohort
             mean = multi_cohort.multiCohortOutcomes.meanSurvivalTimes[cohort_id]
 
-            # construct a gaussian likelihood
+            # construct a gaussian (normal) likelihood
             # with mean calculated from the simulated data and standard deviation from the clinical study.
             # evaluate this pdf (probability density function) at the mean reported in the clinical study.
             weight = stat.norm.pdf(
@@ -75,23 +77,26 @@ class Calibration:
             p=self.normalizedWeights)
 
         # produce the list to report the results
-        for i in range(0, len(self.mortalitySamples)):
+        for i in range(len(self.mortalitySamples)):
             self.csvRows.append(
                 [self.cohortIDs[i], self.normalizedWeights[i], self.mortalitySamples[i]])
 
         # write the calibration result into a csv file
-        InOutSupport.write_csv('CalibrationResults.csv', self.csvRows)
+        InOutSupport.write_csv(
+            file_name='CalibrationResults.csv',
+            rows=self.csvRows)
 
     def get_mortality_estimate_credible_interval(self, alpha):
         """
         :param alpha: the significance level
-        :returns text in the form of 'mean (lower, upper)' of the posterior distribution"""
+        :returns tuple (mean, [lower, upper]) of the posterior distribution"""
 
         # calculate the credible interval
-        sum_stat = StatSupport.SummaryStat('Posterior samples', self.mortalityResamples)
+        sum_stat = StatSupport.SummaryStat(name='Posterior samples',
+                                           data=self.mortalityResamples)
 
         estimate = sum_stat.get_mean()  # estimated mortality probability
-        credible_interval = sum_stat.get_PI(alpha)  # credible interval
+        credible_interval = sum_stat.get_PI(alpha=alpha)  # credible interval
 
         return estimate, credible_interval
 
@@ -105,16 +110,16 @@ class Calibration:
 class CalibratedModel:
     """ to run the calibrated survival model """
 
-    def __init__(self, cvs_file_name, drug_effectiveness_ratio=1):
+    def __init__(self, csv_file_name, drug_effectiveness_ratio=1):
         """ extracts seeds, mortality probabilities and the associated likelihood from
         the csv file where the calibration results are stored
-        :param cvs_file_name: name of the csv file where the calibrated results are stored
+        :param csv_file_name: name of the csv file where the calibrated results are stored
         :param drug_effectiveness_ratio: effectiveness of the drug
         """
 
         # read the columns of the csv files containing the calibration results
         cols = InOutSupport.read_csv_cols(
-            file_name=cvs_file_name,
+            file_name=csv_file_name,
             n_cols=3,
             if_ignore_first_row=True,
             if_convert_float=True)

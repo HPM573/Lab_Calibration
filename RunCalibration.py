@@ -18,7 +18,7 @@ Fig.graph_histogram(
 
 # Estimate of mortality probability and the posterior interval
 print('Estimate of mortality probability ({:.{prec}%} credible interval):'.format(1-CalibSets.ALPHA, prec=0),
-      calibration.get_mortality_estimate_credible_interval(CalibSets.ALPHA))
+      calibration.get_mortality_estimate_credible_interval(alpha=CalibSets.ALPHA))
 
 # effective sample size
 txtEff = 'Effective sample size: {:.1f}'.format(calibration.get_effective_sample_size())
