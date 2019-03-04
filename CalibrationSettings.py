@@ -9,7 +9,7 @@ OBS_ALPHA = 0.05   # significance level
 SIM_POP_SIZE = 500       # population size of simulated cohorts
 TIME_STEPS = 1000        # length of simulation
 ALPHA = 0.05             # significance level for calculating confidence intervals
-NUM_SIM_COHORTS = 500   # number of simulated cohorts used to calculate prediction intervals
+NUM_SIM_COHORTS = 1000   # number of simulated cohorts used to calculate prediction intervals
 
 # the standard deviation of the mean survival time reported in the clinical study
 # assumes that the reported confidence interval in this study is a t-confidence interval

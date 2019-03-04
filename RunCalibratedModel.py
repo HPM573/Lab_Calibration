@@ -16,6 +16,7 @@ Fig.graph_histogram(
     title='Histogram of Mean Survival Time',
     x_label='Mean Survival Time (Year)',
     y_label='Count',
+    bin_width=0.25,
     x_range=[7, 13])
 
 # report mean and projection interval
