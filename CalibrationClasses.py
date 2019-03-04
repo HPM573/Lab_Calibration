@@ -20,11 +20,10 @@ class Calibration:
 
         self.cohortIDs = range(CalibSets.POST_N)   # IDs of cohorts to simulate
         self.mortalitySamples = []      # values of mortality probability at which the posterior should be sampled
-        self.mortalityResamples = []    # resampled values for constructing posterior estimate and interval
-        self.weights = []               # likelihood weights of sampled mortality probabilities
         self.normalizedWeights = []     # normalized likelihood weights (sums to 1)
         self.csvRows = \
             [['Cohort ID', 'Likelihood Weights', 'Mortality Prob']]  # list containing the calibration results
+        self.mortalityResamples = []  # resampled values for constructing posterior estimate and interval
 
     def sample_posterior(self):
         """ sample the posterior distribution of the mortality probability """
@@ -49,6 +48,7 @@ class Calibration:
         multi_cohort.simulate(n_time_steps=CalibSets.TIME_STEPS)
 
         # calculate the likelihood of each simulated cohort
+        weights = []
         for cohort_id in self.cohortIDs:
 
             # get the average survival time for this cohort
@@ -63,11 +63,11 @@ class Calibration:
                 scale=CalibSets.OBS_STDEV)
 
             # store the weight
-            self.weights.append(weight)
+            weights.append(weight)
 
         # normalize the likelihood weights
-        sum_weights = np.sum(self.weights)
-        self.normalizedWeights = np.divide(self.weights, sum_weights)
+        sum_weights = np.sum(weights)
+        self.normalizedWeights = np.divide(weights, sum_weights)
 
         # re-sample mortality probability (with replacement) according to likelihood weights
         self.mortalityResamples = np.random.choice(
