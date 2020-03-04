@@ -36,7 +36,6 @@ Hist.plot_histogram(
     y_label='Counts',
     x_range=[Sets.POST_L, Sets.POST_U])
 
-
 # Estimate of mortality probability and the posterior interval
 print('Estimate of mortality probability ({:.{prec}%} credible interval):'.format(1 - Sets.ALPHA, prec=0),
       calibrated_model.get_mortality_estimate_credible_interval(alpha=Sets.ALPHA))
