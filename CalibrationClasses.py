@@ -1,8 +1,8 @@
 from enum import Enum
 import scipy.stats as stat
 import numpy as np
-import SimPy.InOutFunctions as InOutSupport
-import SimPy.StatisticalClasses as StatSupport
+import SimPy.InOutFunctions as IO
+import SimPy.StatisticalClasses as Stat
 import MultiSurvivalModelClasses as SurvivalCls
 import CalibrationSettings as Sets
 
@@ -57,7 +57,7 @@ class Calibration:
             # get the average survival time for this cohort
             mean = multi_cohort.multiCohortOutcomes.meanSurvivalTimes[cohort_id]
 
-            # construct a gaussian (normal) likelihood
+            # construct a normal likelihood
             # with mean calculated from the simulated data and standard deviation from the clinical study.
             # evaluate this pdf (probability density function) at the mean reported in the clinical study.
             weight = stat.norm.pdf(
@@ -80,7 +80,7 @@ class Calibration:
                 [self.cohortIDs[i], self.normalizedWeights[i], self.mortalitySamples[i]])
 
         # write the calibration result into a csv file
-        InOutSupport.write_csv(
+        IO.write_csv(
             file_name='CalibrationResults.csv',
             rows=csv_rows)
 
@@ -102,7 +102,7 @@ class CalibratedModel:
         """
 
         # read the columns of the csv files containing the calibration results
-        cols = InOutSupport.read_csv_cols(
+        cols = IO.read_csv_cols(
             file_name=csv_file_name,
             n_cols=3,
             if_ignore_first_row=True,
@@ -171,8 +171,8 @@ class CalibratedModel:
         :returns tuple (mean, [lower, upper]) of the posterior distribution"""
 
         # calculate the credible interval
-        sum_stat = StatSupport.SummaryStat(name='Posterior samples',
-                                           data=self.resampledMortalityProb)
+        sum_stat = Stat.SummaryStat(name='Posterior samples',
+                                    data=self.resampledMortalityProb)
 
         estimate = sum_stat.get_mean()  # estimated mortality probability
         credible_interval = sum_stat.get_PI(alpha=alpha)  # credible interval
