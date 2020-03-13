@@ -156,7 +156,6 @@ class CalibratedModel:
     def get_mean_survival_time_proj_interval(self, alpha):
         """
         :param alpha: the significance level
-        :param deci: decimal places
         :returns tuple in the form of (mean, [lower, upper]) of projection interval
         """
 
