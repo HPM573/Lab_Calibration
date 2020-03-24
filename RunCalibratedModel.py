@@ -34,7 +34,7 @@ Hist.plot_histogram(
     title='Histogram of Resampled Mortality Probabilities',
     x_label='Mortality Probability',
     y_label='Counts',
-    x_range=[Sets.POST_L, Sets.POST_U])
+    x_range=[Sets.PRIOR_L, Sets.PRIOR_U])
 
 # Estimate of mortality probability and the posterior interval
 print('Estimate of mortality probability ({:.{prec}%} credible interval):'.format(1 - Sets.ALPHA, prec=0),

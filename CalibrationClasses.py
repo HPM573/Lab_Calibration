@@ -36,15 +36,15 @@ class Calibration:
 
         # find values of mortality probability at which the posterior should be evaluated
         self.mortalitySamples = np.random.uniform(
-            low=Sets.POST_L,
-            high=Sets.POST_U,
-            size=Sets.POST_N)
+            low=Sets.PRIOR_L,
+            high=Sets.PRIOR_U,
+            size=Sets.PRIOR_N)
 
         # create a multi cohort
         multi_cohort = SurvivalCls.MultiCohort(
             ids=self.cohortIDs,
             mortality_probs=self.mortalitySamples,
-            pop_sizes=[Sets.SIM_POP_SIZE] * Sets.POST_N
+            pop_sizes=[Sets.SIM_POP_SIZE] * Sets.PRIOR_N
         )
 
         # simulate the multi cohort

@@ -7,13 +7,13 @@ import SimPy.Plots.SamplePaths as Path
 # find values of mortality probability at which the posterior should be evaluated
 np.random.seed(1)
 mortality_samples = np.random.uniform(
-    low=Sets.POST_L,
-    high=Sets.POST_U,
-    size=Sets.POST_N)
+    low=Sets.PRIOR_L,
+    high=Sets.PRIOR_U,
+    size=Sets.PRIOR_N)
 
 # create multiple cohorts
 multiCohort = Cls.MultiCohort(
-    ids=range(Sets.POST_N),
+    ids=range(Sets.PRIOR_N),
     pop_sizes=[Sets.SIM_POP_SIZE] * Sets.NUM_SIM_COHORTS,
     mortality_probs=mortality_samples  # [p1, p2, ....]
 )
@@ -44,7 +44,7 @@ Hist.plot_histogram(
     title='Histogram of Mortality Probabilities',
     x_label='Mortality Probability',
     y_label='Counts',
-    x_range=[Sets.POST_L, Sets.POST_U])
+    x_range=[Sets.PRIOR_L, Sets.PRIOR_U])
 
 # print projected mean survival time (years)
 print('Projected mean survival time (years)',
