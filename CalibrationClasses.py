@@ -69,7 +69,7 @@ class Calibration:
             weights.append(weight)
 
         # normalize the likelihood weights
-        sum_weights = np.sum(weights)
+        sum_weights = sum(weights)
         self.normalizedWeights = np.divide(weights, sum_weights)
 
         # produce the list to report the results
