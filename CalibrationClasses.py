@@ -2,7 +2,7 @@ from enum import Enum
 import scipy.stats as stat
 import numpy as np
 import SimPy.InOutFunctions as IO
-import SimPy.StatisticalClasses as Stat
+import SimPy.Statistics as Stat
 import MultiSurvivalModelClasses as SurvivalCls
 import CalibrationSettings as Sets
 

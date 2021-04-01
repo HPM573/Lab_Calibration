@@ -14,7 +14,7 @@ mortality_samples = np.random.uniform(
 # create multiple cohorts
 multiCohort = Cls.MultiCohort(
     ids=range(Sets.PRIOR_N),
-    pop_sizes=[Sets.SIM_POP_SIZE] * Sets.NUM_SIM_COHORTS,
+    pop_sizes=[Sets.SIM_POP_SIZE] * Sets.PRIOR_N,
     mortality_probs=mortality_samples  # [p1, p2, ....]
 )
 
