@@ -1,8 +1,9 @@
-import CalibrationSettings as Sets
+import deampy.plots.histogram as hist
+import deampy.plots.sample_paths as path
 import numpy as np
+
+import CalibrationSettings as Sets
 import MultiSurvivalModelClasses as Cls
-import SimPy.Plots.Histogram as Hist
-import SimPy.Plots.SamplePaths as Path
 
 # find values of mortality probability at which the posterior should be evaluated
 np.random.seed(1)
@@ -22,7 +23,7 @@ multiCohort = Cls.MultiCohort(
 multiCohort.simulate(Sets.TIME_STEPS)
 
 # plot the sample paths
-Path.plot_sample_paths(
+path.plot_sample_paths(
     sample_paths=multiCohort.multiCohortOutcomes.survivalCurves,
     title='Survival Curves',
     x_label='Time-Step (Year)',
@@ -30,16 +31,16 @@ Path.plot_sample_paths(
     transparency=0.5)
 
 # plot the histogram of average survival time
-Hist.plot_histogram(
+hist.plot_histogram(
     data=multiCohort.multiCohortOutcomes.meanSurvivalTimes,
     title='Histogram of Mean Survival Time',
     x_label='Mean Survival Time (Year)',
     y_label='Count',
     x_range=[2.5, 21.5],
-    bin_width=0.5)
+    bin_width=2)
 
 # create the histogram of the mortality probabilities
-Hist.plot_histogram(
+hist.plot_histogram(
     data=mortality_samples,
     title='Histogram of Mortality Probabilities',
     x_label='Mortality Probability',

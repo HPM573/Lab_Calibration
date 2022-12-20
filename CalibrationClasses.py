@@ -1,10 +1,12 @@
 from enum import Enum
-import scipy.stats as stat
+
+import deampy.in_out_functions as IO
+import deampy.statistics as stat
 import numpy as np
-import SimPy.InOutFunctions as IO
-import SimPy.Statistics as Stat
-import MultiSurvivalModelClasses as SurvivalCls
+import scipy.stats as stats
+
 import CalibrationSettings as Sets
+import MultiSurvivalModelClasses as SurvivalCls
 
 
 class CalibrationColIndex(Enum):
@@ -60,7 +62,7 @@ class Calibration:
             # construct a normal likelihood
             # with mean calculated from the simulated data and standard deviation from the clinical study.
             # evaluate this pdf (probability density function) at the mean reported in the clinical study.
-            weight = stat.norm.pdf(
+            weight = stats.norm.pdf(
                 x=Sets.OBS_MEAN,
                 loc=mean,
                 scale=Sets.OBS_STDEV)
@@ -170,7 +172,7 @@ class CalibratedModel:
         :returns tuple (mean, [lower, upper]) of the posterior distribution"""
 
         # calculate the credible interval
-        sum_stat = Stat.SummaryStat(name='Posterior samples',
+        sum_stat = stat.SummaryStat(name='Posterior samples',
                                     data=self.resampledMortalityProb)
 
         estimate = sum_stat.get_mean()  # estimated mortality probability
