@@ -13,7 +13,7 @@ NUM_SIM_COHORTS = 100   # number of simulated cohorts used to calculate predicti
 
 # the standard deviation of the mean survival time reported in the clinical study
 # assumes that the reported confidence interval in this study is a t-confidence interval
-OBS_STDEV = OBS_HL / stat.t.ppf(1 - OBS_ALPHA / 2, OBS_N-1)
+OBS_STDEV =
 
 # how to sample the posterior distribution of mortality probability
 # minimum, maximum and the number of samples for the mortality probability

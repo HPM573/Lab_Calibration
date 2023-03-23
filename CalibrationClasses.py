@@ -30,60 +30,30 @@ class Calibration:
          """
 
         # specifying the seed of the numpy random number generator
-        np.random.seed(1)
 
         # cohort ids
-        self.cohortIDs = range(n_samples)
 
         # find values of mortality probability at which the posterior should be evaluated
-        self.mortalitySamples = np.random.uniform(
-            low=Sets.PRIOR_L,
-            high=Sets.PRIOR_U,
-            size=Sets.PRIOR_N)
 
         # create a multi cohort
-        multi_cohort = SurvivalCls.MultiCohort(
-            ids=self.cohortIDs,
-            mortality_probs=self.mortalitySamples,
-            pop_sizes=[Sets.SIM_POP_SIZE] * Sets.PRIOR_N
-        )
 
         # simulate the multi cohort
-        multi_cohort.simulate(n_time_steps=Sets.TIME_STEPS)
 
         # calculate the likelihood of each simulated cohort
-        weights = []
-        for cohort_id in self.cohortIDs:
 
             # get the average survival time for this cohort
-            mean = multi_cohort.multiCohortOutcomes.meanSurvivalTimes[cohort_id]
 
             # construct a normal likelihood
             # with mean calculated from the simulated data and standard deviation from the clinical study.
             # evaluate this pdf (probability density function) at the mean reported in the clinical study.
-            weight = stats.norm.pdf(
-                x=Sets.OBS_MEAN,
-                loc=mean,
-                scale=Sets.OBS_STDEV)
 
             # store the weight
-            weights.append(weight)
 
         # normalize the likelihood weights
-        sum_weights = sum(weights)
-        self.normalizedWeights = np.divide(weights, sum_weights)
 
         # produce the list to report the results
-        csv_rows = \
-            [['Cohort ID', 'Likelihood Weights', 'Mortality Prob']]  # list containing the calibration results
-        for i in range(len(self.mortalitySamples)):
-            csv_rows.append(
-                [self.cohortIDs[i], self.normalizedWeights[i], self.mortalitySamples[i]])
 
         # write the calibration result into a csv file
-        IO.write_csv(
-            file_name='CalibrationResults.csv',
-            rows=csv_rows)
 
     def get_effective_sample_size(self):
         """
