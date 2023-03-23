@@ -17,7 +17,9 @@ path.plot_sample_paths(
     title='Survival Curves',
     x_label='Time-Step (Year)',
     y_label='Number Survived',
-    transparency=0.5)
+    transparency=0.25,
+    x_range=(0, 100),
+    file_name='figs/calibrated/survival_curves.png')
 
 # plot the histogram of mean survival time
 hist.plot_histogram(
@@ -25,8 +27,9 @@ hist.plot_histogram(
     title='Histogram of Mean Survival Time',
     x_label='Mean Survival Time (Year)',
     y_label='Count',
-    bin_width=0.25,
-    x_range=[2.5, 21.5])
+    x_range=[0, 25],
+    bin_width=0.5,
+    file_name='figs/calibrated/survival_times.png')
 
 # create the histogram of the resampled mortality probabilities
 hist.plot_histogram(
@@ -34,7 +37,9 @@ hist.plot_histogram(
     title='Histogram of Resampled Mortality Probabilities',
     x_label='Mortality Probability',
     y_label='Counts',
-    x_range=[Sets.PRIOR_L, Sets.PRIOR_U])
+    x_range=[Sets.PRIOR_L, Sets.PRIOR_U],
+    bin_width=0.005,
+    file_name='figs/calibrated/mortality_probs.png')
 
 # Estimate of mortality probability and the posterior interval
 print('Estimate of mortality probability ({:.{prec}%} credible interval):'.format(1 - Sets.ALPHA, prec=0),
