@@ -104,65 +104,31 @@ class CalibratedModel:
         """
 
         # read the columns of the csv files containing the calibration results
-        cols = IO.read_csv_cols(
-            file_name=csv_file_name,
-            n_cols=3,
-            if_ignore_first_row=True,
-            if_convert_float=True)
 
         # store likelihood weights, cohort IDs and sampled mortality probabilities
-        self.cohortIDs = cols[CalibrationColIndex.ID.value].astype(int)
-        self.weights = cols[CalibrationColIndex.W.value]
-        self.mortalityProbs = cols[CalibrationColIndex.MORT_PROB.value] * drug_effectiveness_ratio
-        self.resampledMortalityProb = []
+
         self.multiCohorts = None  # multi-cohort
 
-    def simulate(self, num_of_simulated_cohorts, cohort_size, time_steps, cohort_ids=None):
+    def simulate(self, num_of_simulated_cohorts, cohort_size, time_steps):
         """ simulate the specified number of cohorts based on their associated likelihood weight
         :param num_of_simulated_cohorts: number of cohorts to simulate
         :param cohort_size: the population size of cohorts
         :param time_steps: simulation length
-        :param cohort_ids: ids of cohort to simulate
         """
         # resample cohort IDs and mortality probabilities based on their likelihood weights
         # sample (with replacement) from indices [0, 1, 2, ..., number of weights] based on the likelihood weights
-        sampled_row_indices = np.random.choice(
-            a=range(0, len(self.weights)),
-            size=num_of_simulated_cohorts,
-            replace=True,
-            p=self.weights)
 
         # use the sampled indices to populate the list of cohort IDs and mortality probabilities
-        resampled_ids = []
-        for i in sampled_row_indices:
-            resampled_ids.append(self.cohortIDs[i])
-            self.resampledMortalityProb.append(self.mortalityProbs[i])
 
         # simulate the desired number of cohorts
-        if cohort_ids is None:
-            # if cohort ids are not provided, use the ids stored in the calibration results
-            self.multiCohorts = SurvivalCls.MultiCohort(
-                ids=resampled_ids,
-                pop_sizes=[cohort_size] * num_of_simulated_cohorts,
-                mortality_probs=self.resampledMortalityProb)
-        else:
-            # if cohort ids are provided, use them instead of the ids stored in the calibration results
-            self.multiCohorts = SurvivalCls.MultiCohort(
-                ids=cohort_ids,
-                pop_sizes=[cohort_size] * num_of_simulated_cohorts,
-                mortality_probs=self.resampledMortalityProb)
 
         # simulate all cohorts
-        self.multiCohorts.simulate(time_steps)
 
     def get_mean_survival_time_proj_interval(self, alpha):
         """
         :param alpha: the significance level
         :returns tuple in the form of (mean, [lower, upper]) of projection interval
         """
-
-        mean = self.multiCohorts.multiCohortOutcomes.statMeanSurvivalTime.get_mean()
-        proj_interval = self.multiCohorts.multiCohortOutcomes.statMeanSurvivalTime.get_PI(alpha=alpha)
 
         return mean, proj_interval
 
@@ -172,10 +138,6 @@ class CalibratedModel:
         :returns tuple (mean, [lower, upper]) of the posterior distribution"""
 
         # calculate the credible interval
-        sum_stat = stat.SummaryStat(name='Posterior samples',
-                                    data=self.resampledMortalityProb)
 
-        estimate = sum_stat.get_mean()  # estimated mortality probability
-        credible_interval = sum_stat.get_PI(alpha=alpha)  # credible interval
 
         return estimate, credible_interval
