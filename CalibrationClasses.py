@@ -1,7 +1,6 @@
 from enum import Enum
 
 import deampy.in_out_functions as IO
-import deampy.statistics as stat
 import numpy as np
 import scipy.stats as stats
 
@@ -91,53 +90,3 @@ class Calibration:
         :returns: the effective sample size
         """
         return 1 / np.sum(self.normalizedWeights ** 2)
-
-
-class CalibratedModel:
-    """ to run the calibrated survival model """
-
-    def __init__(self, csv_file_name, drug_effectiveness_ratio=1):
-        """ extracts seeds, mortality probabilities and the associated likelihood from
-        the csv file where the calibration results are stored
-        :param csv_file_name: name of the csv file where the calibrated results are stored
-        :param drug_effectiveness_ratio: effectiveness of the drug
-        """
-
-        # read the columns of the csv files containing the calibration results
-
-        # store likelihood weights, cohort IDs and sampled mortality probabilities
-
-        self.multiCohorts = None  # multi-cohort
-
-    def simulate(self, num_of_simulated_cohorts, cohort_size, time_steps):
-        """ simulate the specified number of cohorts based on their associated likelihood weight
-        :param num_of_simulated_cohorts: number of cohorts to simulate
-        :param cohort_size: the population size of cohorts
-        :param time_steps: simulation length
-        """
-        # resample cohort IDs and mortality probabilities based on their likelihood weights
-        # sample (with replacement) from indices [0, 1, 2, ..., number of weights] based on the likelihood weights
-
-        # use the sampled indices to populate the list of cohort IDs and mortality probabilities
-
-        # simulate the desired number of cohorts
-
-        # simulate all cohorts
-
-    def get_mean_survival_time_proj_interval(self, alpha):
-        """
-        :param alpha: the significance level
-        :returns tuple in the form of (mean, [lower, upper]) of projection interval
-        """
-
-        return mean, proj_interval
-
-    def get_mortality_estimate_credible_interval(self, alpha):
-        """
-        :param alpha: the significance level
-        :returns tuple (mean, [lower, upper]) of the posterior distribution"""
-
-        # calculate the credible interval
-
-
-        return estimate, credible_interval
