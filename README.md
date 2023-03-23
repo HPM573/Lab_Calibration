@@ -1,7 +1,6 @@
 # Lab: Calibration
 
 This repository uses:
-- [SimPy](https://github.com/yaesoubilab/SimPy)
 - [Lab_SurvivalModel](https://github.com/HPM573/Lab_SurvivalModel)
 - [Lab_MultiSurvivalModel](https://github.com/HPM573/Lab_MultiSurvivalModel)
 
