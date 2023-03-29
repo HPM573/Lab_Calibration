@@ -1,7 +1,6 @@
 from enum import Enum
 
 import deampy.in_out_functions as IO
-import deampy.statistics as stat
 import numpy as np
 import scipy.stats as stats
 
@@ -96,11 +95,10 @@ class Calibration:
 class CalibratedModel:
     """ to run the calibrated survival model """
 
-    def __init__(self, csv_file_name, drug_effectiveness_ratio=1):
+    def __init__(self, csv_file_name):
         """ extracts seeds, mortality probabilities and the associated likelihood from
         the csv file where the calibration results are stored
         :param csv_file_name: name of the csv file where the calibrated results are stored
-        :param drug_effectiveness_ratio: effectiveness of the drug
         """
 
         # read the columns of the csv files containing the calibration results
