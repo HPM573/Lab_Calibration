@@ -96,11 +96,10 @@ class Calibration:
 class CalibratedModel:
     """ to run the calibrated survival model """
 
-    def __init__(self, csv_file_name, drug_effectiveness_ratio=1):
+    def __init__(self, csv_file_name):
         """ extracts seeds, mortality probabilities and the associated likelihood from
         the csv file where the calibration results are stored
         :param csv_file_name: name of the csv file where the calibrated results are stored
-        :param drug_effectiveness_ratio: effectiveness of the drug
         """
 
         # read the columns of the csv files containing the calibration results
@@ -113,16 +112,15 @@ class CalibratedModel:
         # store likelihood weights, cohort IDs and sampled mortality probabilities
         self.cohortIDs = cols[CalibrationColIndex.ID.value].astype(int)
         self.weights = cols[CalibrationColIndex.W.value]
-        self.mortalityProbs = cols[CalibrationColIndex.MORT_PROB.value] * drug_effectiveness_ratio
+        self.mortalityProbs = cols[CalibrationColIndex.MORT_PROB.value]
         self.resampledMortalityProb = []
         self.multiCohorts = None  # multi-cohort
 
-    def simulate(self, num_of_simulated_cohorts, cohort_size, time_steps, cohort_ids=None):
+    def simulate(self, num_of_simulated_cohorts, cohort_size, time_steps):
         """ simulate the specified number of cohorts based on their associated likelihood weight
         :param num_of_simulated_cohorts: number of cohorts to simulate
         :param cohort_size: the population size of cohorts
         :param time_steps: simulation length
-        :param cohort_ids: ids of cohort to simulate
         """
         # resample cohort IDs and mortality probabilities based on their likelihood weights
         # sample (with replacement) from indices [0, 1, 2, ..., number of weights] based on the likelihood weights
@@ -139,18 +137,10 @@ class CalibratedModel:
             self.resampledMortalityProb.append(self.mortalityProbs[i])
 
         # simulate the desired number of cohorts
-        if cohort_ids is None:
-            # if cohort ids are not provided, use the ids stored in the calibration results
-            self.multiCohorts = SurvivalCls.MultiCohort(
-                ids=resampled_ids,
-                pop_sizes=[cohort_size] * num_of_simulated_cohorts,
-                mortality_probs=self.resampledMortalityProb)
-        else:
-            # if cohort ids are provided, use them instead of the ids stored in the calibration results
-            self.multiCohorts = SurvivalCls.MultiCohort(
-                ids=cohort_ids,
-                pop_sizes=[cohort_size] * num_of_simulated_cohorts,
-                mortality_probs=self.resampledMortalityProb)
+        self.multiCohorts = SurvivalCls.MultiCohort(
+            ids=resampled_ids,
+            pop_sizes=[cohort_size] * num_of_simulated_cohorts,
+            mortality_probs=self.resampledMortalityProb)
 
         # simulate all cohorts
         self.multiCohorts.simulate(time_steps)
