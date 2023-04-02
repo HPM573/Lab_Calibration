@@ -1,11 +1,6 @@
 from enum import Enum
 
-import deampy.in_out_functions as IO
 import numpy as np
-import scipy.stats as stats
-
-import CalibrationSettings as Sets
-import MultiSurvivalModelClasses as SurvivalCls
 
 
 class CalibrationColIndex(Enum):
@@ -29,7 +24,7 @@ class Calibration:
          :param n_samples: number of samples from the posterior distribution
          """
 
-        # specifying the seed of the numpy random number generator
+        # random number generator
 
         # cohort ids
 
