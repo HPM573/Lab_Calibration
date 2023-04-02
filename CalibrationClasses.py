@@ -3,6 +3,7 @@ from enum import Enum
 import deampy.in_out_functions as IO
 import numpy as np
 import scipy.stats as stats
+from numpy.random import RandomState
 
 import CalibrationSettings as Sets
 import MultiSurvivalModelClasses as SurvivalCls
@@ -29,14 +30,14 @@ class Calibration:
          :param n_samples: number of samples from the posterior distribution
          """
 
-        # specifying the seed of the numpy random number generator
-        np.random.seed(1)
+        # random number generator
+        rng = RandomState(1)
 
         # cohort ids
         self.cohortIDs = range(n_samples)
 
         # find values of mortality probability at which the posterior should be evaluated
-        self.mortalitySamples = np.random.uniform(
+        self.mortalitySamples = rng.uniform(
             low=Sets.PRIOR_L,
             high=Sets.PRIOR_U,
             size=Sets.PRIOR_N)
