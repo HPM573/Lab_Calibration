@@ -124,9 +124,12 @@ class CalibratedModel:
         :param cohort_size: the population size of cohorts
         :param time_steps: simulation length
         """
+
+        rng = RandomState(1)
+
         # resample cohort IDs and mortality probabilities based on their likelihood weights
         # sample (with replacement) from indices [0, 1, 2, ..., number of weights] based on the likelihood weights
-        sampled_row_indices = np.random.choice(
+        sampled_row_indices = rng.choice(
             a=range(0, len(self.weights)),
             size=num_of_simulated_cohorts,
             replace=True,
