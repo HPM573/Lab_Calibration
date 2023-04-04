@@ -125,6 +125,7 @@ class CalibratedModel:
         :param time_steps: simulation length
         """
 
+        # random number generator
         rng = RandomState(1)
 
         # resample cohort IDs and mortality probabilities based on their likelihood weights
