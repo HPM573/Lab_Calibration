@@ -114,6 +114,9 @@ class CalibratedModel:
         :param cohort_size: the population size of cohorts
         :param time_steps: simulation length
         """
+
+        # random number generator
+
         # resample cohort IDs and mortality probabilities based on their likelihood weights
         # sample (with replacement) from indices [0, 1, 2, ..., number of weights] based on the likelihood weights
 
