@@ -1,6 +1,7 @@
 from enum import Enum
 
 import deampy.in_out_functions as IO
+import deampy.statistics as stat
 import numpy as np
 import scipy.stats as stats
 from numpy.random import RandomState
