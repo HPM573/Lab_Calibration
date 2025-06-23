@@ -17,4 +17,5 @@ OBS_STDEV = OBS_HL / stat.t.ppf(1 - OBS_ALPHA / 2, OBS_N-1)
 
 # how to sample the posterior distribution of mortality probability
 # minimum, maximum and the number of samples for the mortality probability
-PRIOR_L, PRIOR_U, PRIOR_N = 0.05, 0.15, 500
+PRIOR_RANGE = [0.05, 0.15]
+N_SAMPLES = 50  # number of samples from the posterior distribution
