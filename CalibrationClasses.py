@@ -62,6 +62,10 @@ class Calibration:
             self.calib.save_posterior(
                 file_name="output/posterior_{}.csv".format(method),
                 n_resample=n_samples, parameter_names=['Mortality Probability'], significant_digits=3)
+        elif method == 'mcmc':
+            self.calib.save_posterior(
+                file_name="output/posterior_{}.csv".format(method),
+                n_warmup=int(0.1*n_samples), parameter_names=['Mortality Probability'], significant_digits=3)
 
 
     def plot_posterior(self, method, n_resamples):
