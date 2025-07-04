@@ -5,9 +5,11 @@ import CalibrationSettings as Sets
 calibration = Cls.Calibration()
 
 # sample the posterior of the mortality probability
-calibration.sample_posterior(n_samples=Sets.N_SAMPLES)
+calibration.sample_posterior(method='random', n_samples=Sets.N_SAMPLES)
+calibration.plot_posterior(method='random', n_resamples=Sets.N_SAMPLES)
 
-calibration.plot_posterior(n_resamples=Sets.N_SAMPLES)
+calibration.sample_posterior(method='mcmc', n_samples=Sets.N_SAMPLES, std_factor=Sets.STD_Factor)
+calibration.plot_posterior(method='mcmc', n_resamples=Sets.N_SAMPLES)
 
 # # effective sample size
 # txtEff = 'Effective sample size: {:.1f}'.format(calibration.get_effective_sample_size())

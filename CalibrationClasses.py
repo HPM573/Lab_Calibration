@@ -5,7 +5,7 @@ import scipy.stats as stats
 import CalibrationSettings as Sets
 import MultiSurvivalModelClasses as SurvivalCls
 from SurvivalModelClasses import Cohort
-from deampy.calibration import CalibrationRandomSampling
+from deampy.calibration import CalibrationRandomSampling, CalibrationMCMCSampling
 
 
 class CalibrationColIndex(Enum):
@@ -37,29 +37,45 @@ def log_likelihood(thetas, seed):
 class Calibration:
     def __init__(self):
         """ initializes the calibration object"""
+        self.calib = None  # will be set in the sample_posterior method
 
-        self.calib = CalibrationRandomSampling(prior_ranges=Sets.PRIOR_RANGE)
-
-    def sample_posterior(self, n_samples):
+    def sample_posterior(self, method, n_samples, std_factor=0.1):
         """ sample the posterior distribution of the mortality probability,
-         :param n_samples: number of samples from the posterior distribution
+        :param method: the sampling method to use, either 'random sampling' or 'mcmc sampling
+        :param n_samples: number of samples from the posterior distribution
+        :param std_factor: standard deviation factor for the MCMC sampling method
          """
 
-        self.calib.run(log_likelihood_func=log_likelihood, num_samples=n_samples)
-        self.calib.save_samples(
-            file_name="output/samples.csv",
-            parameter_names=['Mortality Probability'])
-        self.calib.save_posterior(
-            file_name="output/posterior.csv",
-            n_resample=n_samples, parameter_names=['Mortality Probability'], significant_digits=3)
+        if method == 'random':
+            self.calib = CalibrationRandomSampling(prior_ranges=Sets.PRIOR_RANGE)
+            self.calib.run(log_likelihood_func=log_likelihood, num_samples=n_samples)
+        elif method == 'mcmc':
+            self.calib= CalibrationMCMCSampling(prior_ranges=Sets.PRIOR_RANGE)
+            self.calib.run(log_likelihood_func=log_likelihood, std_factor=std_factor, num_samples=n_samples)
+        else:
+            raise ValueError("Unknown sampling method: {}".format(method))
 
-    def plot_posterior(self, n_resamples):
+        self.calib.save_samples(
+            file_name="output/samples_{}.csv".format(method),
+            parameter_names=['Mortality Probability'])
+        if method == 'random':
+            self.calib.save_posterior(
+                file_name="output/posterior_{}.csv".format(method),
+                n_resample=n_samples, parameter_names=['Mortality Probability'], significant_digits=3)
+
+
+    def plot_posterior(self, method, n_resamples):
         """ plot the posterior distribution of the mortality probability """
 
-        self.calib.read_samples(file_name="output/samples.csv")
-        self.calib.plot_posterior(
-            n_resample=n_resamples, figsize=(5, 5), parameter_names=['Mortality Probability'],
-            file_name='figs/posterior_plot.png')
+        self.calib.read_samples(file_name="output/samples_{}.csv".format(method))
+        if method == 'random':
+            self.calib.plot_posterior(
+                n_resample=n_resamples, figsize=(5, 5), parameter_names=['Mortality Probability'],
+                file_name='figs/posterior_plot_{}.png'.format(method))
+        elif method == 'mcmc':
+            self.calib.plot_posterior(
+                n_warmup = int(0.1*n_resamples), figsize=(5, 5), parameter_names=['Mortality Probability'],
+                file_name='figs/posterior_plot_{}.png'.format(method))
 
 
     # def get_effective_sample_size(self):
