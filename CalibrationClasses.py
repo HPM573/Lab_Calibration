@@ -92,7 +92,7 @@ class Calibration:
 class CalibratedModel:
     """ to run the calibrated survival model """
 
-    def __init__(self, drug_effectiveness_ratio=1):
+    def __init__(self, calib_method, drug_effectiveness_ratio=1):
         """ extracts seeds, mortality probabilities and the associated likelihood from
         the csv file where the calibration results are stored
         :param drug_effectiveness_ratio: effectiveness of the drug
@@ -100,8 +100,14 @@ class CalibratedModel:
 
         self.drugEffRatio = drug_effectiveness_ratio
 
-        self.calib = CalibrationRandomSampling(prior_ranges=Sets.PRIOR_RANGE)
-        self.calib.read_samples(file_name="output/samples.csv")
+        if calib_method == 'random':
+            self.calib = CalibrationRandomSampling(prior_ranges=Sets.PRIOR_RANGE)
+        elif calib_method == 'mcmc':
+            self.calib = CalibrationMCMCSampling(prior_ranges=Sets.PRIOR_RANGE)
+        else:
+            raise ValueError("Unknown calibration method: {}".format(calib_method))
+
+        self.calib.read_samples(file_name="output/samples_{}.csv".format(calib_method))
 
         self.multiCohorts = None  # multi-cohort
 
@@ -112,13 +118,25 @@ class CalibratedModel:
         :param time_steps: simulation length
         """
 
-        self.calib.resample(n_resample=num_of_simulated_cohorts)
+        if isinstance(self.calib, CalibrationRandomSampling):
+            # resample the seeds and mortality probabilities
+            self.calib.resample(n_resample=num_of_simulated_cohorts)
 
-        # simulate the desired number of cohorts
-        self.multiCohorts = SurvivalCls.MultiCohort(
-            ids=self.calib.resampledSeeds,
-            pop_sizes=[cohort_size] * num_of_simulated_cohorts,
-            mortality_probs=self.calib.resamples[0] * self.drugEffRatio)
+            # simulate the desired number of cohorts
+            self.multiCohorts = SurvivalCls.MultiCohort(
+                ids=self.calib.resampledSeeds,
+                pop_sizes=[cohort_size] * num_of_simulated_cohorts,
+                mortality_probs=self.calib.resamples[0] * self.drugEffRatio)
+
+        elif isinstance(self.calib, CalibrationMCMCSampling):
+
+            # simulate the desired number of cohorts
+            self.multiCohorts = SurvivalCls.MultiCohort(
+                ids=self.calib.seeds[-num_of_simulated_cohorts:],
+                pop_sizes=[cohort_size] * num_of_simulated_cohorts,
+                mortality_probs=self.calib.samples[0][-num_of_simulated_cohorts:] * self.drugEffRatio)
+        else:
+            raise ValueError("Unknown calibration method: {}".format(self.calib))
 
         # simulate all cohorts
         self.multiCohorts.simulate(time_steps)
