@@ -1,9 +1,9 @@
 import numpy as np
 
 import CalibrationSettings as Sets
-import MultiSurvivalModelClasses as Cls
 import deampy.plots.histogram as hist
 import deampy.plots.sample_paths as path
+from MultiSurvivalModelClasses import MultiCohort
 
 # find values of mortality probability at which the posterior should be evaluated
 np.random.seed(1)
@@ -13,7 +13,7 @@ mortality_samples = np.random.uniform(
     size=Sets.N_SAMPLES)
 
 # create multiple cohorts
-multiCohort = Cls.MultiCohort(
+multiCohort = MultiCohort(
     ids=range(Sets.N_SAMPLES),
     pop_sizes=[Sets.SIM_POP_SIZE] * Sets.N_SAMPLES,
     mortality_probs=mortality_samples  # [p1, p2, ....]

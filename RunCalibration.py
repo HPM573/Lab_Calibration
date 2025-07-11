@@ -1,8 +1,8 @@
-import CalibrationClasses as Cls
 import CalibrationSettings as Sets
+from CalibrationClasses import Calibration
 
 # create a calibration object
-calibration = Cls.Calibration()
+calibration = Calibration()
 
 # sample the posterior of the mortality probability
 calibration.sample_posterior(method='random', n_samples=Sets.N_SAMPLES)

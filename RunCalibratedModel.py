@@ -1,12 +1,13 @@
-import CalibrationClasses as Cls
 import CalibrationSettings as Sets
 import deampy.plots.histogram as hist
 import deampy.plots.sample_paths as path
+from CalibrationClasses import CalibratedModel
+
 
 def run_calibrated_model(method):
 
     # initialize a calibrated model
-    calibrated_model = Cls.CalibratedModel(calib_method=method)
+    calibrated_model = CalibratedModel(calib_method=method)
     # simulate the calibrated model
     calibrated_model.simulate(num_of_simulated_cohorts=Sets.NUM_SIM_COHORTS,
                               cohort_size=Sets.SIM_POP_SIZE,
