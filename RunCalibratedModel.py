@@ -42,6 +42,6 @@ def run_calibrated_model(method):
 if __name__ == "__main__":
     # run the calibrated model with the specified method
 
-    # run_calibrated_model(method='random')
-    run_calibrated_model(method='mcmc')
+    run_calibrated_model(method='random')
+    # run_calibrated_model(method='mcmc')
 
