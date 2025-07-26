@@ -18,6 +18,6 @@ OBS_STDEV = OBS_HL / stat.t.ppf(1 - OBS_ALPHA / 2, OBS_N-1)
 # how to sample the posterior distribution of mortality probability
 # minimum, maximum and the number of samples for the mortality probability
 PRIOR_RANGE = {'Mortality Probability': [0.05, 0.15]}
-N_SAMPLES = 500  # number of samples from the posterior distribution
+N_SAMPLES = 50  # number of samples from the posterior distribution
 
 STD_Factor = 0.1  # standard deviation factor for the MCMC sampling method
