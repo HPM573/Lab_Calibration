@@ -1,7 +1,7 @@
-import CalibrationSettings as Sets
+import calib_sets as sets
 import deampy.plots.histogram as hist
 import deampy.plots.sample_paths as path
-from CalibrationClasses import CalibratedModel
+from calib_src.classes import CalibratedModel
 
 
 def run_calibrated_model(method):
@@ -9,9 +9,9 @@ def run_calibrated_model(method):
     # initialize a calibrated model
     calibrated_model = CalibratedModel(calib_method=method)
     # simulate the calibrated model
-    calibrated_model.simulate(num_of_simulated_cohorts=Sets.NUM_SIM_COHORTS,
-                              cohort_size=Sets.SIM_POP_SIZE,
-                              time_steps=Sets.TIME_STEPS)
+    calibrated_model.simulate(num_of_simulated_cohorts=sets.NUM_SIM_COHORTS,
+                              cohort_size=sets.SIM_POP_SIZE,
+                              time_steps=sets.TIME_STEPS)
 
     # plot the sample paths
     path.plot_sample_paths(
@@ -35,8 +35,8 @@ def run_calibrated_model(method):
 
 
     # report mean and projection interval
-    print('Mean survival time and {:.{prec}%} projection interval:'.format(1 - Sets.ALPHA, prec=0),
-          calibrated_model.get_mean_survival_time_proj_interval(alpha=Sets.ALPHA))
+    print('Mean survival time and {:.{prec}%} projection interval:'.format(1 - sets.ALPHA, prec=0),
+          calibrated_model.get_mean_survival_time_proj_interval(alpha=sets.ALPHA))
 
 
 if __name__ == "__main__":

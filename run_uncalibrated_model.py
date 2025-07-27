@@ -1,6 +1,6 @@
 import numpy as np
 
-import CalibrationSettings as Sets
+import calib_sets as sets
 import deampy.plots.histogram as hist
 import deampy.plots.sample_paths as path
 from MultiSurvivalModelClasses import MultiCohort
@@ -8,19 +8,21 @@ from MultiSurvivalModelClasses import MultiCohort
 # find values of mortality probability at which the posterior should be evaluated
 np.random.seed(1)
 mortality_samples = np.random.uniform(
-    low=Sets.PRIOR_RANGE[0],
-    high=Sets.PRIOR_RANGE[1],
-    size=Sets.N_SAMPLES)
+    low=sets.PRIOR_RANGE['Mortality Probability'][0],
+    high=sets.PRIOR_RANGE['Mortality Probability'][1],
+    size=sets.N_SAMPLES)
 
 # create multiple cohorts
 multiCohort = MultiCohort(
-    ids=range(Sets.N_SAMPLES),
-    pop_sizes=[Sets.SIM_POP_SIZE] * Sets.N_SAMPLES,
+    ids=range(sets.N_SAMPLES),
+    pop_sizes=[sets.SIM_POP_SIZE] * sets.N_SAMPLES,
     mortality_probs=mortality_samples  # [p1, p2, ....]
 )
 
 # simulate all cohorts
-multiCohort.simulate(Sets.TIME_STEPS)
+multiCohort.simulate(
+    n_time_steps= sets.TIME_STEPS,
+    seeds=range(sets.N_SAMPLES))
 
 # plot the sample paths
 path.plot_sample_paths(
@@ -48,7 +50,7 @@ hist.plot_histogram(
     title='Histogram of Mortality Probabilities',
     x_label='Mortality Probability',
     y_label='Counts',
-    x_range=Sets.PRIOR_RANGE,
+    x_range=sets.PRIOR_RANGE['Mortality Probability'],
     bin_width=0.005,
     file_name='figs/uncalibrated/mortality_probs.png')
 
